@@ -2,29 +2,55 @@
 
 import { useState } from 'react';
 import { toggleAttended, updateNotes } from '@/app/actions';
-import { Check, X, Users, Tent } from 'lucide-react';
+import { Check, X, Users, Search } from 'lucide-react';
 import type { Registration } from '@/server/db/schema';
 
 export default function AdminTable({ data }: { data: Registration[] }) {
   const [editingNotesId, setEditingNotesId] = useState<number | null>(null);
   const [notesTemp, setNotesTemp] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredData = data.filter((row) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      row.name.toLowerCase().includes(q) ||
+      row.email.toLowerCase().includes(q) ||
+      row.phone.toLowerCase().includes(q) ||
+      row.status.toLowerCase().includes(q)
+    );
+  });
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-          <tr>
-            <th className="px-4 py-3">ID</th>
-            <th className="px-4 py-3">Name / Contact</th>
-            <th className="px-4 py-3">Type</th>
-            <th className="px-4 py-3">Companions</th>
-            <th className="px-4 py-3">Equipment</th>
-            <th className="px-4 py-3 text-center">Attended</th>
-            <th className="px-4 py-3">Admin Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row) => (
+    <div>
+      <div className="p-4 border-b border-gray-200 bg-white">
+        <div className="relative max-w-md">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="w-4 h-4 text-gray-500" />
+          </div>
+          <input
+            type="text"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5"
+            placeholder="Search by name, email, phone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="overflow-x-auto rounded-b-lg border-x border-b border-gray-200 shadow">
+        <table className="w-full text-sm text-left text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th className="px-4 py-3">ID</th>
+              <th className="px-4 py-3">Name / Contact</th>
+              <th className="px-4 py-3">Type</th>
+              <th className="px-4 py-3">Companions</th>
+              <th className="px-4 py-3">Equipment</th>
+              <th className="px-4 py-3 text-center">Attended</th>
+              <th className="px-4 py-3">Admin Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((row) => (
             <tr key={row.id} className="bg-white border-b hover:bg-gray-50">
               <td className="px-4 py-3 font-medium text-gray-900">{row.id}</td>
               <td className="px-4 py-3">
@@ -108,7 +134,7 @@ export default function AdminTable({ data }: { data: Registration[] }) {
               </td>
             </tr>
           ))}
-          {data.length === 0 && (
+          {filteredData.length === 0 && (
             <tr>
               <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                 No registrations found.
@@ -117,6 +143,7 @@ export default function AdminTable({ data }: { data: Registration[] }) {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
