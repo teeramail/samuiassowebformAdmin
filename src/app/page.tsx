@@ -10,7 +10,7 @@ export default async function AdminDashboard() {
   
   const totalBookings = allData.length;
   const totalCompanions = allData.reduce((acc, curr) => acc + (curr.companions || 0), 0);
-  const totalPeople = totalBookings + totalCompanions;
+  const totalPeople = totalCompanions;
   
   const attendedCount = allData.filter(r => r.attended).length;
 
