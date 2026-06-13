@@ -1,6 +1,6 @@
 import { db } from '@/server/db';
 import { registrations } from '@/server/db/schema';
-import { desc, sum } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 import AdminTable from '@/components/AdminTable';
 
 export const dynamic = 'force-dynamic';
@@ -9,17 +9,25 @@ export default async function AdminDashboard() {
   const allData = await db.select().from(registrations).orderBy(desc(registrations.createdAt));
   
   const totalBookings = allData.length;
-  const totalCompanions = allData.reduce((acc, curr) => acc + (curr.companions || 0), 0);
-  const totalPeople = totalCompanions;
+  const totalCompanions = allData.reduce((acc, curr) => acc + (curr.companions ?? 0), 0);
+  const totalPeople = totalBookings + totalCompanions;
   
   const attendedCount = allData.filter(r => r.attended).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Registration Admin Dashboard</h1>
-          <p className="text-gray-500">Manage attendees and track event numbers</p>
+        <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Registration Admin Dashboard</h1>
+            <p className="text-gray-500">Manage attendees and track event numbers</p>
+          </div>
+          <a
+            href="/api/export/registrations"
+            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+          >
+            Download Excel
+          </a>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
