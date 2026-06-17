@@ -9,6 +9,7 @@ export default function AdminTable({ data }: { data: Registration[] }) {
   const [editingNotesId, setEditingNotesId] = useState<number | null>(null);
   const [notesTemp, setNotesTemp] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
 
   const filteredData = data.filter((row) => {
     const q = searchQuery.toLowerCase();
@@ -19,6 +20,24 @@ export default function AdminTable({ data }: { data: Registration[] }) {
       row.status.toLowerCase().includes(q)
     );
   });
+
+  async function handleToggleAttended(id: number, currentStatus: boolean) {
+    setLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+
+    try {
+      await toggleAttended(id, currentStatus);
+    } finally {
+      setLoadingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  }
 
   return (
     <div>
@@ -50,7 +69,10 @@ export default function AdminTable({ data }: { data: Registration[] }) {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row) => (
+            {filteredData.map((row) => {
+            const isLoading = loadingIds.has(row.id);
+
+            return (
             <tr key={row.id} className="bg-white border-b hover:bg-gray-50">
               <td className="px-4 py-3 font-medium text-gray-900">{row.id}</td>
               <td className="px-4 py-3">
@@ -79,9 +101,16 @@ export default function AdminTable({ data }: { data: Registration[] }) {
               </td>
               <td className="px-4 py-3 text-center">
                 <button
-                  onClick={() => toggleAttended(row.id, row.attended)}
+                  onClick={() => {
+                    void handleToggleAttended(row.id, row.attended);
+                  }}
+                  aria-busy={isLoading}
                   className={`p-2 rounded-full transition-colors ${
-                    row.attended ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                    isLoading
+                      ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                      : row.attended
+                        ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                   }`}
                 >
                   {row.attended ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
@@ -133,7 +162,8 @@ export default function AdminTable({ data }: { data: Registration[] }) {
                 )}
               </td>
             </tr>
-          ))}
+          );
+          })}
           {filteredData.length === 0 && (
             <tr>
               <td colSpan={7} className="px-4 py-8 text-center text-gray-500">

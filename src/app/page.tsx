@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { db } from '@/server/db';
 import { registrations } from '@/server/db/schema';
 import { desc } from 'drizzle-orm';
@@ -22,12 +23,20 @@ export default async function AdminDashboard() {
             <h1 className="mb-2 text-3xl font-bold text-gray-900">Registration Admin Dashboard</h1>
             <p className="text-gray-500">Manage attendees and track event numbers</p>
           </div>
-          <a
-            href="/api/export/registrations"
-            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
-          >
-            Download Excel
-          </a>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link
+              href="/stats"
+              className="inline-flex items-center justify-center rounded-lg border border-indigo-200 bg-white px-4 py-2.5 text-sm font-medium text-indigo-700 shadow-sm transition-colors hover:bg-indigo-50"
+            >
+              Stats / Forecast
+            </Link>
+            <a
+              href="/api/export/registrations"
+              className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+            >
+              Download Excel
+            </a>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
