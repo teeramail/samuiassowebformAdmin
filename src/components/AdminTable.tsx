@@ -61,10 +61,10 @@ export default function AdminTable({ data }: { data: Registration[] }) {
             <tr>
               <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">Name / Contact</th>
+              <th className="px-4 py-3 text-center">Attended</th>
               <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Companions</th>
               <th className="px-4 py-3">Equipment</th>
-              <th className="px-4 py-3 text-center">Attended</th>
               <th className="px-4 py-3">Admin Notes</th>
             </tr>
           </thead>
@@ -79,6 +79,23 @@ export default function AdminTable({ data }: { data: Registration[] }) {
                 <div className="font-semibold text-gray-900">{row.name}</div>
                 <div className="text-xs text-gray-500">{row.email}</div>
                 <div className="text-xs text-gray-500">{row.phone}</div>
+              </td>
+              <td className="px-4 py-3 text-center">
+                <button
+                  onClick={() => {
+                    void handleToggleAttended(row.id, row.attended);
+                  }}
+                  aria-busy={isLoading}
+                  className={`p-2 rounded-full transition-colors ${
+                    isLoading
+                      ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                      : row.attended
+                        ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                  }`}
+                >
+                  {row.attended ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                </button>
               </td>
               <td className="px-4 py-3">
                 <span className={`px-2 py-1 rounded text-xs ${
@@ -98,23 +115,6 @@ export default function AdminTable({ data }: { data: Registration[] }) {
               <td className="px-4 py-3">
                 {row.equipment === 'none' ? <span className="text-gray-400">None</span> : 
                  row.equipment === 'telescope' ? 'Telescope' : 'Camera Stand'}
-              </td>
-              <td className="px-4 py-3 text-center">
-                <button
-                  onClick={() => {
-                    void handleToggleAttended(row.id, row.attended);
-                  }}
-                  aria-busy={isLoading}
-                  className={`p-2 rounded-full transition-colors ${
-                    isLoading
-                      ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
-                      : row.attended
-                        ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                  }`}
-                >
-                  {row.attended ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                </button>
               </td>
               <td className="px-4 py-3 min-w-[200px]">
                 {editingNotesId === row.id ? (
