@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toggleAttended, updateNotes } from '@/app/actions';
 import { ArrowDown, ArrowUp, ArrowUpDown, Check, X, Users, Search } from 'lucide-react';
 import type { Registration } from '@/server/db/schema';
@@ -77,12 +78,40 @@ function compareNames(left: string, right: string, direction: Exclude<SortDirect
 }
 
 export default function AdminTable({ data }: { data: Registration[] }) {
+  const router = useRouter();
   const [editingNotesId, setEditingNotesId] = useState<number | null>(null);
   const [notesTemp, setNotesTemp] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+  useEffect(() => {
+    const refreshData = () => {
+      router.refresh();
+    };
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        refreshData();
+      }
+    }, 5000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshData();
+      }
+    };
+
+    window.addEventListener('focus', refreshData);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', refreshData);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [router]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.toLowerCase();
@@ -125,6 +154,7 @@ export default function AdminTable({ data }: { data: Registration[] }) {
         next.delete(id);
         return next;
       });
+      router.refresh();
     }
   }
 
