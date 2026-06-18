@@ -14,6 +14,7 @@ export default async function AdminDashboard() {
   const totalPeople = totalBookings + totalCompanions;
   
   const attendedCount = allData.filter(r => r.attended).length;
+  const walkInCount = allData.filter(r => r.isWalkIn).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -39,7 +40,7 @@ export default async function AdminDashboard() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="text-sm font-medium text-gray-500 mb-1">Total Registrations</div>
             <div className="text-3xl font-bold text-indigo-600">{totalBookings}</div>
@@ -55,6 +56,10 @@ export default async function AdminDashboard() {
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="text-sm font-medium text-gray-500 mb-1">Checked In</div>
             <div className="text-3xl font-bold text-green-600">{attendedCount}</div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="text-sm font-medium text-gray-500 mb-1">Walk-ins</div>
+            <div className="text-3xl font-bold text-amber-600">{walkInCount}</div>
           </div>
         </div>
 

@@ -75,6 +75,7 @@ export async function GET() {
     'Source Other',
     'Google ID',
     'Attended',
+    'Walk-in',
     'Admin Notes',
     'Created At',
   ]
@@ -86,7 +87,7 @@ export async function GET() {
       return [
         numberCell(row.id),
         stringCell(row.name),
-        stringCell(row.email),
+        stringCell(row.email ?? ''),
         stringCell(row.phone),
         stringCell(formatStatus(row.status)),
         numberCell(row.companions ?? 0),
@@ -95,6 +96,7 @@ export async function GET() {
         stringCell(row.sourceOther ?? ''),
         stringCell(row.googleId ?? ''),
         stringCell(row.attended ? 'Yes' : 'No'),
+        stringCell(row.isWalkIn ? 'Yes' : 'No'),
         stringCell(row.adminNotes ?? ''),
         stringCell(formatDate(row.createdAt)),
       ].join('');

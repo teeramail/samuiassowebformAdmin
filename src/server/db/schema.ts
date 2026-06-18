@@ -6,7 +6,6 @@ import {
   timestamp,
   text,
   pgEnum,
-  jsonb,
   boolean,
 } from 'drizzle-orm/pg-core';
 
@@ -26,7 +25,7 @@ export const registrations = pgTable('registrations', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
   status: statusEnum('status').notNull(),
   companions: integer('companions').notNull().default(0),
   equipment: equipmentEnum('equipment').notNull(),
@@ -35,9 +34,11 @@ export const registrations = pgTable('registrations', {
   googleId: varchar('google_id', { length: 255 }),
   // Admin fields
   attended: boolean('attended').default(false).notNull(),
+  isWalkIn: boolean('is_walk_in').default(false).notNull(),
   adminNotes: text('admin_notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export type Registration = typeof registrations.$inferSelect;
 export type NewRegistration = typeof registrations.$inferInsert;
+
