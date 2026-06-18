@@ -37,6 +37,7 @@ export const registrations = pgTable('registrations', {
   isWalkIn: boolean('is_walk_in').default(false).notNull(),
   adminNotes: text('admin_notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export type Registration = typeof registrations.$inferSelect;
