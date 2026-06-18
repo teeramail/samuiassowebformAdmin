@@ -16,6 +16,10 @@ export default async function StatsPage() {
   const totalRegistrations = allData.length;
   const totalCompanions = allData.reduce((acc, row) => acc + (row.companions ?? 0), 0);
   const totalPeople = totalRegistrations + totalCompanions;
+  const checkedInPeople = allData
+    .filter((row) => row.attended)
+    .reduce((acc, row) => acc + 1 + (row.companions ?? 0), 0);
+  const notYetCheckedInPeople = Math.max(totalPeople - checkedInPeople, 0);
   const chartSource: StatsRegistrationRecord[] = allData.map((row) => ({
     id: row.id,
     companions: row.companions ?? 0,
@@ -40,7 +44,7 @@ export default async function StatsPage() {
           </Link>
         </header>
 
-        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-6">
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-1 text-sm font-medium text-gray-500">Total Registrations</div>
             <div className="text-3xl font-bold text-indigo-600">{totalRegistrations}</div>
@@ -52,6 +56,14 @@ export default async function StatsPage() {
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-1 text-sm font-medium text-gray-500">Total Expected People</div>
             <div className="text-3xl font-bold text-green-600">{totalPeople}</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mb-1 text-sm font-medium text-gray-500">Checked In</div>
+            <div className="text-3xl font-bold text-green-600">{checkedInPeople}</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mb-1 text-sm font-medium text-gray-500">Not Yet Checked In</div>
+            <div className="text-3xl font-bold text-amber-600">{notYetCheckedInPeople}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-1 text-sm font-medium text-gray-500">Average People Per Registration</div>

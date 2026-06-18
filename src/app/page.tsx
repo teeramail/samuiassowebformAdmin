@@ -13,7 +13,9 @@ export default async function AdminDashboard() {
   const totalCompanions = allData.reduce((acc, curr) => acc + (curr.companions ?? 0), 0);
   const totalPeople = totalBookings + totalCompanions;
   
-  const attendedCount = allData.filter(r => r.attended).length;
+  const attendedCount = allData
+    .filter((row) => row.attended)
+    .reduce((acc, row) => acc + 1 + (row.companions ?? 0), 0);
   const walkInCount = allData.filter(r => r.isWalkIn).length;
 
   return (
